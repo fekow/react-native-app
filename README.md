@@ -6,6 +6,10 @@ Aplicativo feito com react-native utilizando a api do GitHub.
 
 Listagem de usuarios GitHub inseridos e de favoritos de cada usuário.
 
+`v 2.0`
+
+Paginação com scroll infinito, webview de favoritos dentro do app, animações customizadas.
+
 ## Demostração do app:
 
 ![](demo.gif)

@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { BaseButton } from 'react-native-gesture-handler';
 
 export const Container = styled.View`
   flex: 1;
@@ -62,10 +63,13 @@ export const Info = styled.View`
   flex: 1;
 `;
 
-export const Title = styled.Text`
+export const Title = styled.Text.attrs({
+  numberOfLines: 1,
+})`
   font-size: 15px;
   font-weight: bold;
   color: #333;
+  text-decoration: underline;
 `;
 
 export const Author = styled.Text`
@@ -74,4 +78,4 @@ export const Author = styled.Text`
   margin-top: 2px;
 `;
 
-export const Loading = styled.View``;
+export const WebButton = styled(BaseButton)``;

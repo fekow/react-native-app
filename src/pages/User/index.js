@@ -14,12 +14,14 @@ import {
   Info,
   Title,
   Author,
+  WebButton,
 } from './styles';
 
 export default class User extends Component {
   state = {
     stars: [],
     loading: false,
+    page: 1,
   };
 
   static propTypes = {
@@ -28,19 +30,46 @@ export default class User extends Component {
         user: PropTypes.shape({}),
       }),
     }).isRequired,
+
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
+  };
+
+  loadStarred = async () => {
+    if (this.state.loading) return;
+    this.setState({ loading: true });
+    const { page, stars } = this.state;
+    const { user } = this.props.route.params;
+    const response = await api.get(`/users/${user.login}/starred`, {
+      params: {
+        page,
+      },
+    });
+
+    this.setState({
+      stars: [...stars, ...response.data],
+      loading: false,
+      page: page + 1,
+    });
   };
 
   async componentDidMount() {
-    this.setState({ loading: true });
-
-    const { user } = this.props.route.params;
-    const response = await api.get(`/users/${user.login}/starred`);
-
-    this.setState({ stars: response.data, loading: false });
+    this.loadStarred();
   }
 
+  renderFooter = () => {
+    if (!this.state.loading) return null;
+    return <ActivityIndicator color="#3949ab" size={30} />;
+  };
+
+  handleNavigate = star => {
+    const { navigation } = this.props;
+    navigation.navigate('Web', { star }); // passo dados do user como parametro
+  };
+
   render() {
-    const { stars, loading } = this.state;
+    const { stars } = this.state;
     const { user } = this.props.route.params;
     return (
       <Container>
@@ -49,23 +78,24 @@ export default class User extends Component {
           <Name>{user.name}</Name>
           <Bio>{user.bio}</Bio>
         </Header>
-        {!loading ? (
-          <Stars
-            data={stars}
-            keyExtractor={star => String(star.id)} // preciso de um key unico
-            renderItem={({ item }) => (
-              <Starred>
-                <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-                <Info>
+        <Stars
+          onEndReached={this.loadStarred}
+          onEndReachedThreshold={0.1}
+          data={stars}
+          keyExtractor={star => String(star.id)} // preciso de um key unico
+          renderItem={({ item }) => (
+            <Starred>
+              <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+              <Info>
+                <WebButton onPress={() => this.handleNavigate(item)}>
                   <Title>{item.name}</Title>
                   <Author>{item.owner.login}</Author>
-                </Info>
-              </Starred>
-            )}
-          />
-        ) : (
-          <ActivityIndicator color="#3949ab" size={70} />
-        )}
+                </WebButton>
+              </Info>
+            </Starred>
+          )}
+          ListFooterComponent={this.renderFooter}
+        />
       </Container>
     );
   }
