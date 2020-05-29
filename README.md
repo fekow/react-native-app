@@ -1,10 +1,10 @@
 # Listar favoritos GitHub
 
-Aplicativo feito com ReactJS e a API do Github.
+Aplicativo feito com react-native utilizando a api do GitHub.
 
 ## Funcionalidades:
 
-Acessar repositórios e suas issues, com categorização e paginação.
+Listagem de usuarios GitHub inseridos e de favoritos de cada usuário.
 
 ## Demostração do app:
 
